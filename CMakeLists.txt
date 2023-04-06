@@ -14,7 +14,7 @@ target_compile_options(naivestr PRIVATE -O3 -Wall -Werror -Wextra -mno-sse -mno-
 add_library(simdstr SHARED src/simdstr.c)
 target_link_libraries(simdstr PRIVATE naivestr)
 target_include_directories(simdstr PUBLIC include/)
-target_compile_options(simdstr PRIVATE -O3 -Wall -Werror -Wextra -msse -mavx2 -mavx512f -mavx512bw)
+target_compile_options(simdstr PRIVATE -O3 -Wall -Werror -Wextra -march=native)
 
 # add google test
 set(BUILD_GMOCK OFF)

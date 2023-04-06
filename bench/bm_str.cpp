@@ -170,7 +170,9 @@ int main(int argc, char **argv) {
   ADD_BM(memcmpeq, naive);
   ADD_BM(memcmpeq, sse);
   ADD_BM(memcmpeq, avx2);
+#if __AVX512F__ &&  __AVX512BW__
   ADD_BM(memcmpeq, avx512);
+#endif
   ADD_BM(memcmpeq, autovec);
 
   ADD_BM(tolower, naive);

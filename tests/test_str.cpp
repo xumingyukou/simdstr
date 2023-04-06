@@ -173,7 +173,9 @@ void test_strstr(strstr_t strstr) {
 ADD_TEST(memcmpeq, naive);
 ADD_TEST(memcmpeq, sse);
 ADD_TEST(memcmpeq, avx2);
+#if __AVX512F__ &&  __AVX512BW__
 ADD_TEST(memcmpeq, avx512);
+#endif
 ADD_TEST(memcmpeq, autovec);
 
 ADD_TEST(tolower, naive);

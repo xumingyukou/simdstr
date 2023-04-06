@@ -20,7 +20,7 @@ bool memcmpeq_autovec(const char *s1, const char *s2, size_t len) {
 }
 
 bool memcmpeq_sse(const char *s1, const char *s2, size_t len) {
-    // use AVX2 for 32-byte loop
+    // use SSE for 16-byte loop
     while (len >= 16) {
         __m128i  v1   = _mm_loadu_si128((const void *)s1);
         __m128i  v2   = _mm_loadu_si128((const void *)s2);
@@ -56,6 +56,7 @@ bool memcmpeq_avx2(const char *s1, const char *s2, size_t len) {
     return memcmpeq_sse(s1, s2,len);
 }
 
+#if __AVX512F__ &&  __AVX512BW__
 bool memcmpeq_avx512(const char *s1, const char *s2, size_t len) {
     // use AVX512 for 64-byte loop
     while (len >= 64) {
@@ -72,6 +73,7 @@ bool memcmpeq_avx512(const char *s1, const char *s2, size_t len) {
     // deal with trailing bytes
     return memcmpeq_avx2(s1, s2,len);
 }
+#endif
 
 // TODO: implememt follow functions
 // char* tolower_simd(char *dst, const char *src, size_t len);
