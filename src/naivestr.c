@@ -3,8 +3,7 @@
 
 #include "naivestr.h"
 
-// memcmpeq return true if src and dst are equal, otherwise return false.
-bool memcmpeq_naive(const char * restrict s1, const char * restrict s2, size_t len) {
+bool memcmpeq_naive(const char *s1, const char *s2, size_t len) {
     while (len > 0 && *s1++ == *s2++) len--;
     return len == 0;
 }
