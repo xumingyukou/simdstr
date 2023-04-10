@@ -8,10 +8,10 @@
 
 float sum_simd(const float *arr, size_t len) {
     float ret = 0.0;
-    __m256i sum =  _mm256_setzero_si256();
+    __m256 sum =  _mm256_setzero_ps();
     const float *ap = arr;
     while (len >= 8) {
-        __m256i block = _mm256_loadu_si256((__m256i *)(ap));
+        __m256 block = _mm256_loadu_ps(ap);
         sum = _mm256_add_ps(sum, block);
         ap  += 8;
         len -= 8;
@@ -19,7 +19,7 @@ float sum_simd(const float *arr, size_t len) {
 
     // add the reduced float vector
     float temp[8];
-    _mm256_storeu_si256((__m256i *)temp, sum);
+    _mm256_storeu_ps(temp, sum);
     for (int j = 0; j < 8; j++) {
         ret += temp[j];
     }
@@ -34,12 +34,12 @@ float sum_simd(const float *arr, size_t len) {
 
 float sum_simd_fast(const float *arr, size_t len) {
     float ret = 0.0;
-    __m256i sum1 =  _mm256_setzero_si256();
-    __m256i sum2 =  _mm256_setzero_si256();
+    __m256 sum1 =  _mm256_setzero_ps();
+    __m256 sum2 =  _mm256_setzero_ps();
     const float *ap = arr;
     while (len >= 16) {
-        __m256i block1 = _mm256_loadu_si256((__m256i *)(ap));
-        __m256i block2 = _mm256_loadu_si256((__m256i *)(ap + 8));
+        __m256 block1 = _mm256_loadu_ps(ap);
+        __m256 block2 = _mm256_loadu_ps(ap + 8);
         sum1 = _mm256_add_ps(sum1, block1);
         sum2 = _mm256_add_ps(sum2, block2);
         ap  += 16;
@@ -49,7 +49,7 @@ float sum_simd_fast(const float *arr, size_t len) {
     // add the reduced float vector
     float temp[8];
     sum1 = _mm256_add_ps(sum1, sum2);
-    _mm256_storeu_si256((__m256i *)temp, sum1);
+    _mm256_storeu_ps(temp, sum1);
     for (int j = 0; j < 8; j++) {
         ret += temp[j];
     }
