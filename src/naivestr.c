@@ -3,6 +3,14 @@
 
 #include "naivestr.h"
 
+float sum_naive(const float *arr, size_t len) {
+    float sum = 0.0;
+    for (size_t i = 0; i < len; i++) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
 bool memcmpeq_naive(const char *s1, const char *s2, size_t len) {
     while (len > 0 && *s1++ == *s2++) len--;
     return len == 0;

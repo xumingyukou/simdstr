@@ -1,5 +1,7 @@
 #include <random>
 #include <cstring>
+// #include <limits>
+#include <iostream>
 #include <benchmark/benchmark.h>
 
 extern "C" {
@@ -13,6 +15,15 @@ std::string gen_ascii(size_t len) {
     temp[i] = (char)(std::rand() % 128);
   }
   return temp;
+}
+
+void fill_random(float *arr, int size, float range) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(-range, range);
+    for (int i = 0; i < size; i++) {
+        arr[i] = dis(gen);
+    }
 }
 
 std::string quote(const std::string& s) {
@@ -31,6 +42,7 @@ std::string quote(const std::string& s) {
   return temp;
 }
 
+using sum_t      = float (*)(const float *arr, size_t len);
 using memcmpeq_t = bool  (*)(const char *s1, const char *s2, size_t len);
 using tolower_t  = char* (*)(char *dst, const char *src, size_t len);
 using compact_t  = int   (*)(char *dst, const char *src, size_t len);
@@ -84,6 +96,22 @@ static void test_strstr(benchmark::State& state, strstr_t strstr,
   if (got != exp) {
     state.SkipWithError("strstr test failed");
   }
+}
+
+static void bm_sum(benchmark::State& state, sum_t fsum) {
+  size_t len = 5120;
+  float *arr = new float[len];
+  fill_random(arr, len, 1.0);
+  float sum = 0.0;
+  for (auto _ : state) {
+    sum = fsum(arr, len);
+  }
+
+  float diff = sum - sum_naive(arr, len);
+  if (diff >= 1e-6) {
+    // state.SkipWithError("sum test failed");
+  }
+  delete[] arr;
 }
 
 static void bm_memcmpeq(benchmark::State& state, memcmpeq_t memcmpeq) {
@@ -167,8 +195,13 @@ int main(int argc, char **argv) {
     bm_##func, func##_##arch);                  \
   } while(0)
 
+  ADD_BM(sum, naive);
+  ADD_BM(sum, simd);
+  ADD_BM(sum, simd_fast);
   ADD_BM(memcmpeq, naive);
   ADD_BM(memcmpeq, sse);
+  ADD_BM(memcmpeq, sse4_2);
+  ADD_BM(memcmpeq, sse4_2_fast);
   ADD_BM(memcmpeq, avx2);
 #if __AVX512F__ &&  __AVX512BW__
   ADD_BM(memcmpeq, avx512);

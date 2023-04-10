@@ -8,13 +8,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # add naivestr librariy
 add_library(naivestr SHARED src/naivestr.c)
 target_include_directories(naivestr PUBLIC include/)
-target_compile_options(naivestr PRIVATE -O3 -Wall -Werror -Wextra -mno-sse -mno-avx2)
+target_compile_options(naivestr PRIVATE -O3 -Wall -Werror -Wextra -mno-avx2 -mno-avx512f -g)
 
 # add simdstr librariy
 add_library(simdstr SHARED src/simdstr.c)
 target_link_libraries(simdstr PRIVATE naivestr)
 target_include_directories(simdstr PUBLIC include/)
-target_compile_options(simdstr PRIVATE -O3 -Wall -Werror -Wextra -march=native)
+target_compile_options(simdstr PRIVATE -O3 -Wall -Werror -Wextra -march=native -g)
 
 # add google test
 set(BUILD_GMOCK OFF)
